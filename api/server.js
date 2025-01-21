@@ -1,39 +1,55 @@
 const express = require("express");
 const fs = require("fs");
-const cors = require("cors");  // Import the CORS package
+const cors = require("cors");
 const app = express();
 const PORT = 3000;
 
-// Enable CORS for all origins (or you can specify only localhost:4200 for more security)
 app.use(cors());
 
-// Middleware to parse JSON
 app.use(express.json());
 
-// Mock user data for login
 const mockUsers = [
   { email: "testuser@example.com", password: "password123", userId: 123 }
 ];
 
-// Register endpoint
+let properties = [
+  {
+    id: 1,
+    title: "Modern Apartment in Downtown",
+    description: "A beautiful modern apartment located in the heart of the city.",
+    price: 1200,
+    image: "/api/images/property1.jpg"
+  },
+  {
+    id: 2,
+    title: "Cozy Country House",
+    description: "Enjoy the serenity of the countryside in this cozy house.",
+    price: 850,
+    image: "/api/images/property2.jpg"
+  },
+  {
+    id: 3,
+    title: "Luxury Villa with Pool",
+    description: "A stunning villa with a private pool and breathtaking views.",
+    price: 5000,
+    image: "/api/images/property3.jpg"
+  }
+];
+
 app.post("/api/register", (req, res) => {
   const { email, password } = req.body;
 
-  // You would typically save this to a database, but here we'll just respond with success
-  mockUsers.push({ email, password, userId: Date.now() });  // Add a new user with a unique userId
+  mockUsers.push({ email, password, userId: Date.now() });
   res.status(201).json({ message: "User registered successfully.", userId: Date.now() });
 });
 
-// Login endpoint with email-based authentication
 app.post("/api/login", (req, res) => {
   const { email, password } = req.body;
 
-  // Check if the user exists and the password is correct
   const user = mockUsers.find(user => user.email === email && user.password === password);
 
   if (user) {
-    // Mocking a JWT token (you can replace this with an actual JWT token generation method)
-    const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."; 
+    const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...";
     return res.status(200).json({
       message: "Login successful",
       token: token,
@@ -44,7 +60,6 @@ app.post("/api/login", (req, res) => {
   }
 });
 
-// Verify endpoint to check the validity of the token
 app.get("/api/verify", (req, res) => {
   const token = req.headers.authorization;
 
@@ -52,11 +67,59 @@ app.get("/api/verify", (req, res) => {
     return res.status(401).json({ error: "Authorization token missing." });
   }
 
-  // In a real scenario, you would decode and verify the token here
   res.status(200).json({ message: "Token is valid.", userId: 123 });
 });
 
-// Start the server
+app.get("/api/properties", (req, res) => {
+  res.status(200).json(properties);
+});
+
+app.get("/api/properties/:id", (req, res) => {
+  const property = properties.find(p => p.id === parseInt(req.params.id));
+  if (property) {
+    res.status(200).json(property);
+  } else {
+    res.status(404).json({ error: "Property not found" });
+  }
+});
+
+app.post("/api/properties", (req, res) => {
+  const { title, description, price, image } = req.body;
+  const newProperty = {
+    id: properties.length + 1,
+    title,
+    description,
+    price,
+    image
+  };
+  properties.push(newProperty);
+  res.status(201).json({ message: "Property added successfully.", propertyId: newProperty.id });
+});
+
+app.put("/api/properties/:id", (req, res) => {
+  const { title, description, price, image } = req.body;
+  const property = properties.find(p => p.id === parseInt(req.params.id));
+  if (property) {
+    property.title = title;
+    property.description = description;
+    property.price = price;
+    property.image = image;
+    res.status(200).json({ message: "Property updated successfully." });
+  } else {
+    res.status(404).json({ error: "Property not found" });
+  }
+});
+
+app.delete("/api/properties/:id", (req, res) => {
+  const propertyIndex = properties.findIndex(p => p.id === parseInt(req.params.id));
+  if (propertyIndex !== -1) {
+    properties.splice(propertyIndex, 1);
+    res.status(200).json({ message: "Property deleted successfully." });
+  } else {
+    res.status(404).json({ error: "Property not found" });
+  }
+});
+
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });
