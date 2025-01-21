@@ -1,0 +1,159 @@
+{
+  "api": {
+    "version": "1.0",
+    "endpoints": [
+      {
+        "name": "User Registration",
+        "method": "POST",
+        "url": "/api/register",
+        "description": "Registers a new user in the system.",
+        "requestBody": {
+          "username": "string",
+          "email": "string",
+          "password": "string"
+        },
+        "responses": {
+          "201": {
+            "message": "User registered successfully.",
+            "userId": "integer"
+          },
+          "400": {
+            "error": "string"
+          }
+        }
+      },
+      {
+        "name": "User Login",
+        "method": "POST",
+        "url": "/api/login",
+        "description": "Authenticates a user and generates a token.",
+        "requestBody": {
+          "email": "string",
+          "password": "string"
+        },
+        "responses": {
+          "200": {
+            "message": "Login successful.",
+            "token": "string",
+            "userId": "integer"
+          },
+          "401": {
+            "error": "string"
+          }
+        }
+      },
+      {
+        "name": "Token Verification",
+        "method": "GET",
+        "url": "/api/verify",
+        "description": "Validates a JWT token.",
+        "headers": {
+          "Authorization": "Bearer <token>"
+        },
+        "responses": {
+          "200": {
+            "message": "Token is valid.",
+            "userId": "integer"
+          },
+          "401": {
+            "error": "string"
+          }
+        }
+      },
+      {
+        "name": "Get All Properties",
+        "method": "GET",
+        "url": "/api/properties",
+        "description": "Fetches all available properties.",
+        "responses": {
+          "200": {
+            "properties": [
+              {
+                "id": "integer",
+                "title": "string",
+                "description": "string",
+                "price": "number",
+                "image": "string"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "name": "Get Property by ID",
+        "method": "GET",
+        "url": "/api/properties/{id}",
+        "description": "Fetches a specific property by ID.",
+        "responses": {
+          "200": {
+            "property": {
+              "id": "integer",
+              "title": "string",
+              "description": "string",
+              "price": "number",
+              "image": "string"
+            }
+          },
+          "404": {
+            "error": "string"
+          }
+        }
+      },
+      {
+        "name": "Add New Property",
+        "method": "POST",
+        "url": "/api/properties",
+        "description": "Adds a new property.",
+        "requestBody": {
+          "title": "string",
+          "description": "string",
+          "price": "number",
+          "image": "string"
+        },
+        "responses": {
+          "201": {
+            "message": "Property added successfully.",
+            "propertyId": "integer"
+          },
+          "400": {
+            "error": "string"
+          }
+        }
+      },
+      {
+        "name": "Update Property",
+        "method": "PUT",
+        "url": "/api/properties/{id}",
+        "description": "Updates an existing property.",
+        "requestBody": {
+          "title": "string",
+          "description": "string",
+          "price": "number",
+          "image": "string"
+        },
+        "responses": {
+          "200": {
+            "message": "Property updated successfully."
+          },
+          "404": {
+            "error": "string"
+          }
+        }
+      },
+      {
+        "name": "Delete Property",
+        "method": "DELETE",
+        "url": "/api/properties/{id}",
+        "description": "Deletes a property by ID.",
+        "responses": {
+          "200": {
+            "message": "Property deleted successfully."
+          },
+          "404": {
+            "error": "string"
+          }
+        }
+      }
+    ]
+  }
+}
