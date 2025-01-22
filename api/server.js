@@ -34,8 +34,94 @@ let properties = [
     description: "A stunning villa with a private pool and breathtaking views.",
     price: 5000,
     image: "/api/images/property3.jpg"
+  },
+  {
+    id: 4,
+    title: "Spacious Loft in the City",
+    description: "A modern, open-concept loft with expansive windows and city views.",
+    price: 2500,
+    image: "/api/images/property4.jpg"
+  },
+  {
+    id: 5,
+    title: "Beachfront Bungalow",
+    description: "A charming bungalow right on the beach, perfect for a relaxing getaway.",
+    price: 3000,
+    image: "/api/images/property5.jpg"
+  },
+  {
+    id: 6,
+    title: "Mountain Retreat Cabin",
+    description: "A cozy cabin in the mountains, ideal for a peaceful escape.",
+    price: 2000,
+    image: "/api/images/property6.jpg"
+  },
+  {
+    id: 7,
+    title: "Urban Penthouse with Skyline Views",
+    description: "A luxurious penthouse offering sweeping views of the city skyline.",
+    price: 4500,
+    image: "/api/images/property7.jpg"
+  },
+  {
+    id: 8,
+    title: "Charming Cottage in the Forest",
+    description: "A quaint cottage surrounded by nature, perfect for outdoor lovers.",
+    price: 1500,
+    image: "/api/images/property8.jpg"
+  },
+  {
+    id: 9,
+    title: "Minimalist Apartment with Modern Amenities",
+    description: "A sleek, stylish apartment in a prime location, offering all modern conveniences.",
+    price: 2200,
+    image: "/api/images/property9.jpg"
   }
 ];
+
+let userCarts = {};
+
+app.get('/api/cart/:userId', (req, res) => {
+  const { userId } = req.params;
+  const cart = userCarts[userId] || [];
+  res.status(200).json(cart);
+});
+
+app.post('/api/cart/:userId', (req, res) => {
+  const { userId } = req.params;
+  const property = req.body;
+
+  if (!userCarts[userId]) {
+    userCarts[userId] = [];
+  }
+
+  const cart = userCarts[userId];
+  if (!cart.find((item) => item.id === property.id)) {
+    cart.push(property);
+    res.status(201).json({ message: 'Property added to cart successfully.' });
+  } else {
+    res.status(400).json({ error: 'Property already exists in the cart.' });
+  }
+});
+
+app.delete('/api/cart/:userId/:propertyId', (req, res) => {
+  const { userId, propertyId } = req.params;
+
+  if (userCarts[userId]) {
+    userCarts[userId] = userCarts[userId].filter(
+      (item) => item.id !== parseInt(propertyId)
+    );
+    res.status(200).json({ message: 'Property removed from cart.' });
+  } else {
+    res.status(404).json({ error: 'Cart not found.' });
+  }
+});
+
+app.delete('/api/cart/:userId', (req, res) => {
+  const { userId } = req.params;
+  userCarts[userId] = [];
+  res.status(200).json({ message: 'Cart cleared successfully.' });
+});
 
 app.post("/api/register", (req, res) => {
   const { email, password } = req.body;
