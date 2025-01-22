@@ -9,7 +9,8 @@ app.use(cors());
 app.use(express.json());
 
 const mockUsers = [
-  { email: "testuser@example.com", password: "password123", userId: 123 }
+  { email: "testuser@example.com", password: "password123", userId: 123 },
+  { email: "admin@admin.com", password: "admin123", userId: 1, isAdmin: true }
 ];
 
 let properties = [
@@ -53,7 +54,8 @@ app.post("/api/login", (req, res) => {
     return res.status(200).json({
       message: "Login successful",
       token: token,
-      userId: user.userId
+      userId: user.userId,
+      isAdmin: user.isAdmin || false
     });
   } else {
     return res.status(401).json({ error: "Invalid email or password." });
